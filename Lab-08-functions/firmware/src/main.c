@@ -235,7 +235,7 @@ int main ( void )
 
                 isUSARTTxComplete = false;
                 snprintf((char*)uartTxBuffer, MAX_PRINT_LEN,
-                        "========= asmAbs In-progress test summary:\r\n"
+                        "========= asmUnpack In-progress test summary:\r\n"
                         "%ld of %ld tests passed so far...\r\n"
                         "\r\n",
                         unpackTotalPassCount, unpackTotalTests); 

@@ -82,7 +82,6 @@ final_Product:   .word     0
 asmUnpack:   
     
     /*** STUDENTS: Place your asmUnpack code BELOW this line!!! **************/
-
     
     /*** STUDENTS: Place your asmUnpack code ABOVE this line!!! **************/
 
