@@ -591,19 +591,21 @@ int main ( void )
         uint32_t idleCount = 1;
         // uint32_t totalTests = totalPassCount + totalFailCount;
         bool firstTime = true;
-        // float unpackPct, absPct, multPct, fsPct, mainPct;
+        // Total points should be 40 to match the lab question
+        uint32_t numPtsPerFunc = 8; 
         uint32_t unpackPts, absPts, multPts, fsPts, mainPts,totalPts;
-        unpackPts = 5*unpackTotalPassCount/unpackTotalTests;
-        absPts = 5*absTotalPassCount/absTotalTests;
-        multPts = 5*multTotalPassCount/multTotalTests;
-        fsPts = 5*fsTotalPassCount/fsTotalTests;
-        mainPts = 5*mainTotalPassCount/mainTotalTests;
+        unpackPts = numPtsPerFunc*unpackTotalPassCount/unpackTotalTests;
+        absPts = numPtsPerFunc*absTotalPassCount/absTotalTests;
+        multPts = numPtsPerFunc*multTotalPassCount/multTotalTests;
+        fsPts = numPtsPerFunc*fsTotalPassCount/fsTotalTests;
+        mainPts = numPtsPerFunc*mainTotalPassCount/mainTotalTests;
         totalPts = unpackPts + absPts + multPts + fsPts + mainPts;
         
         while(true)      // post-test forever loop
         {
             isRTCExpired = false;
             isUSARTTxComplete = false;
+            // Only print all results if tests for all funcs were run
             if (doUnpackTest == true && 
                     doAbsTest == true && 
                     doMultTest == true &&

@@ -20,6 +20,8 @@
     
 /*** STUDENTS: Change the next line to your name!  **/
 nameStr: .asciz "Inigo Montoya"  
+
+.align   /* realign so that next mem allocations are on word boundaries */
  
 /* initialize a global variable that C can access to print the nameStr */
 .global nameStrPtr
