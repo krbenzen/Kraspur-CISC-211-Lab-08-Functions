@@ -591,8 +591,8 @@ int main ( void )
         uint32_t idleCount = 1;
         // uint32_t totalTests = totalPassCount + totalFailCount;
         bool firstTime = true;
-        // Total points should be 40 to match the lab question
-        uint32_t numPtsPerFunc = 8; 
+        // Total points should be 50 to match the lab question
+        uint32_t numPtsPerFunc = 10; 
         uint32_t unpackPts, absPts, multPts, fsPts, mainPts,totalPts;
         unpackPts = numPtsPerFunc*unpackTotalPassCount/unpackTotalTests;
         absPts = numPtsPerFunc*absTotalPassCount/absTotalTests;
