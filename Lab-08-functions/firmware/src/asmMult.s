@@ -19,7 +19,7 @@
 .type nameStr,%gnu_unique_object
     
 /*** STUDENTS: Change the next line to your name!  **/
-nameStr: .asciz "Inigo Montoya"  
+nameStr: .asciz "Benzen Raspur"  
 
 .align   /* realign so that next mem allocations are on word boundaries */
  
@@ -84,7 +84,18 @@ final_Product:   .word     0
 asmUnpack:   
     
     /*** STUDENTS: Place your asmUnpack code BELOW this line!!! **************/
-    
+
+    push {lr}
+    /*Top 16 bit to A */
+    /*Shift right by 16*/
+    mov     r3, r0, asr #16
+    str     r3, [r1]
+    /*Bottom 16 bit to B*/
+    /*Shift left then arithmetic shift*/
+    mov     r3, r0, lsl #16
+    mov     r3, r3, asr #16
+    str     r3, [r2]
+    pop     {pc}
     /*** STUDENTS: Place your asmUnpack code ABOVE this line!!! **************/
 
 
@@ -102,8 +113,23 @@ asmUnpack:
 asmAbs:  
 
     /*** STUDENTS: Place your asmAbs code BELOW this line!!! **************/
-    
-
+    push    {lr}
+    cmp     r0, #0
+    bge     positive
+    /*If negative, flip*/
+    rsb     r0, r0, #0    /* r0 = -r0 */
+    mov     r3, #1
+    str     r3, [r2]
+    b       done
+    positive:
+    /*If 
+     it = 0, sign bit = 0*/
+    mov     r3, #0
+    str     r3, [r2]
+done:
+    /*Store the value to memory*/
+    str     r0, [r1]
+    pop     {pc}
     /*** STUDENTS: Place your asmAbs code ABOVE this line!!! **************/
 
 
@@ -118,7 +144,25 @@ asmAbs:
 asmMult:   
 
     /*** STUDENTS: Place your asmMult code BELOW this line!!! **************/
+    push    {r4, lr}
+    mov     r2, #0      /*Goes in r2 */
+loop_start:
+    cmp     r1, #0
+    beq     done_mult
 
+   /*Check if LSB of r1 is 1*/
+    tst     r1, #1
+    beq     skip_add
+    adds    r2, r2, r0
+skip_add:
+    /*Shift r0 by 1, r1 by 1*/
+    lsls    r0, r0, #1
+    lsrs    r1, r1, #1
+    b       loop_start
+
+done_mult:
+    mov     r0, r2    
+    pop     {r4, pc}
 
     /*** STUDENTS: Place your asmMult code ABOVE this line!!! **************/
 
@@ -140,7 +184,14 @@ asmMult:
 asmFixSign:   
     
     /*** STUDENTS: Place your asmFixSign code BELOW this line!!! **************/
-
+    push    {lr}
+    eors    r3, r1, r2
+    cmp     r3, #0
+    beq     fix_done
+    /*If r3 = 0, flip sign of r0*/
+    rsb     r0, r0, #0
+fix_done:
+    pop     {pc}
     
     /*** STUDENTS: Place your asmFixSign code ABOVE this line!!! **************/
 
@@ -165,25 +216,34 @@ asmFixSign:
 asmMain:   
     
     /*** STUDENTS: Place your asmMain code BELOW this line!!! **************/
-    
     /* Step 1:
      * call asmUnpack. Have it store the output values in a_Multiplicand
      * and b_Multiplier.
      */
-
+    ldr     r1, =a_Multiplicand
+    ldr     r2, =b_Multiplier
+    bl      asmUnpack
 
      /* Step 2a:
       * call asmAbs for the multiplicand (a). Have it store the absolute value
       * in a_Abs, and the sign in a_Sign.
       */
-
+    ldr     r0, =a_Multiplicand
+    ldr     r0, [r0]             /* r0 <- A */
+    ldr     r1, =a_Abs
+    ldr     r2, =a_Sign
+    bl      asmAbs
 
 
      /* Step 2b:
       * call asmAbs for the multiplier (b). Have it store the absolute value
       * in b_Abs, and the sign in b_Sign.
       */
-
+    ldr     r0, =b_Multiplier
+    ldr     r0, [r0]             /* r0 <- B */
+    ldr     r1, =b_Abs
+    ldr     r2, =b_Sign
+    bl      asmAbs
 
 
     /* Step 3:
@@ -193,7 +253,13 @@ asmMain:
      * In this function (asmMain), store the output value  
      * returned asmMult in r0 to mem location init_Product.
      */
-
+    ldr     r0, =a_Abs
+    ldr     r0, [r0]
+    ldr     r1, =b_Abs
+    ldr     r1, [r1]
+    bl      asmMult
+    ldr     r1, =init_Product
+    str     r0, [r1]
 
     /* Step 4:
      * call asmFixSign. Pass in the initial product, and the
@@ -202,7 +268,13 @@ asmMain:
      * sign. Store the value returned in r0 to mem location 
      * final_Product.
      */
-
+    ldr     r1, =a_Sign
+    ldr     r1, [r1]
+    ldr     r2, =b_Sign
+    ldr     r2, [r2]
+    bl      asmFixSign
+    ldr     r1, =final_Product
+    str     r0, [r1]
 
      /* Step 5:
       * END! Return to caller. Make sure of the following:
@@ -210,7 +282,7 @@ asmMain:
       * 2) the final answer is stored in r0, so that the C call 
       *    can access it.
       */
-
+    pop     {r4, r5, r6, pc}
 
     
     /*** STUDENTS: Place your asmMain code ABOVE this line!!! **************/
